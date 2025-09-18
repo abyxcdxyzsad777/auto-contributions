@@ -1,0 +1,28 @@
+name: Auto PR
+
+on:
+  schedule:
+    - cron: "0 12 * * *"   # tạo PR mỗi ngày lúc 12h UTC
+  workflow_dispatch:
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create Branch and PR
+        run: |
+          branch="auto-pr-$(date +%s)"
+          git checkout -b $branch
+          echo "PR created at $(date)" >> pr_log.txt
+          git add pr_log.txt
+          git commit -m "Auto PR commit"
+          git push origin $branch
+
+      - uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: "auto-pr"
+          title: "Auto Pull Request"
+          body: "Automated PR for contribution farming"
