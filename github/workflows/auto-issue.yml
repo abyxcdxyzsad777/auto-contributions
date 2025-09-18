@@ -1,0 +1,21 @@
+name: Auto Issue
+
+on:
+  schedule:
+    - cron: "0 10 * * *"   # tạo issue mỗi ngày lúc 10h UTC
+  workflow_dispatch:
+
+jobs:
+  issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const today = new Date().toISOString().split("T")[0];
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Auto Issue - ${today}`,
+              body: "This is an automated issue for contribution farming 🚀"
+            });
